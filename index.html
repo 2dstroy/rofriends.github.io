@@ -1,69 +1,77 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connect to Ronin Wallet</title>
+  <meta charset="UTF-8" />
+  <title>Ronin Wallet Connect</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #0f0f0f; color: #fff; }
-    button { padding: 12px 24px; font-size: 18px; background: #00d4ff; color: #000; border: none; border-radius: 8px; cursor: pointer; }
-    button:hover { background: #00b8e0; }
-    #status { margin-top: 20px; font-size: 16px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #1f1f24;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #00ffa3;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #00d48a;
+    }
+
+    #wallet {
+      margin-top: 20px;
+      word-break: break-all;
+    }
   </style>
 </head>
+
 <body>
-  <h1>Connect to Ronin Wallet</h1>
+
+  <h1>Ronin Wallet Login</h1>
   <button id="connectBtn">Connect Ronin Wallet</button>
-  <div id="status"></div>
+  <p id="wallet">Not connected</p>
 
   <script>
-    const connectBtn = document.getElementById('connectBtn');
-    const status = document.getElementById('status');
+    const connectBtn = document.getElementById("connectBtn");
+    const walletText = document.getElementById("wallet");
 
     async function connectRonin() {
-      if (typeof window.ronin === 'undefined') {
-        status.innerHTML = `❌ Ronin Wallet not detected.<br>
-          <a href="https://wallet.roninchain.com" target="_blank">Install Ronin Wallet</a>`;
-        return;
-      }
-
       try {
-        // Request accounts (this will prompt the user if not connected)
-        const accounts = await window.ronin.request({
-          method: 'eth_requestAccounts'
+        // Check if Ronin Wallet is installed
+        if (!window.ronin || !window.ronin.provider) {
+          alert("Ronin Wallet not found. Please install it.");
+          return;
+        }
+
+        // Request accounts
+        const accounts = await window.ronin.provider.request({
+          method: "eth_requestAccounts"
         });
 
-        const address = accounts[0];
-        const chainId = await window.ronin.request({ method: 'eth_chainId' });
+        const walletAddress = accounts[0];
 
-        status.innerHTML = `
-          ✅ Connected!<br>
-          <strong>Address:</strong> ${address}<br>
-          <strong>Chain ID:</strong> ${parseInt(chainId, 16)} 
-          (${chainId === '0x7e4' ? 'Ronin Mainnet' : 'Other'})
-        `;
+        walletText.innerText = "Connected: " + walletAddress;
+        console.log("Wallet connected:", walletAddress);
 
-        console.log("Connected Address:", address);
-      } catch (error) {
-        console.error(error);
-        status.innerHTML = `❌ Connection failed: ${error.message || error}`;
+      } catch (err) {
+        console.error(err);
+        walletText.innerText = "Connection failed";
       }
     }
 
-    connectBtn.addEventListener('click', connectRonin);
-
-    // Optional: Auto-detect if already connected
-    window.addEventListener('load', async () => {
-      if (window.ronin) {
-        try {
-          const accounts = await window.ronin.request({ method: 'eth_accounts' });
-          if (accounts.length > 0) {
-            status.innerHTML = `Already connected: ${accounts[0]}`;
-          }
-        } catch (e) {}
-      }
-    });
+    connectBtn.addEventListener("click", connectRonin);
   </script>
+
 </body>
 </html>
