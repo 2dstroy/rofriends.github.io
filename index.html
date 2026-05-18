@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +90,7 @@
         </div>
 
         <button class="btn ronin-btn" id="signInBtn">
-            Sign in with Ronin Wallet
+            Connect to Ronin Wallet
         </button>
 
         <div class="status" id="status">Disconnected</div>
@@ -103,60 +102,91 @@
         const statusEl = document.getElementById("status");
         const walletEl = document.getElementById("wallet");
 
-        async function signInWithRonin() {
+        const RONIN_CHAIN_ID = "0x7e4"; // 2020 in hex
+
+        async function connectToRonin() {
             try {
-                statusEl.innerText = "Connecting...";
+                statusEl.innerText = "Connecting to Ronin Wallet...";
                 signInBtn.disabled = true;
                 signInBtn.innerText = "Connecting...";
 
                 const provider = window.ronin || window.ethereum;
 
                 if (!provider) {
-                    alert("Please install Ronin Wallet extension");
-                    statusEl.innerText = "Ronin Wallet not found";
+                    alert("Ronin Wallet not detected!\nPlease install the Ronin Wallet extension.");
+                    window.open("https://wallet.roninchain.com", "_blank");
                     resetButton();
                     return;
                 }
 
-                // First connect (from your 2nd script)
-                const accounts = await provider.request({ 
-                    method: "eth_requestAccounts" 
+                // Switch to Ronin Network if needed
+                try {
+                    await provider.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: RONIN_CHAIN_ID }]
+                    });
+                } catch (switchError) {
+                    // If chain doesn't exist, add it
+                    if (switchError.code === 4902) {
+                        await provider.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: RONIN_CHAIN_ID,
+                                chainName: 'Ronin',
+                                nativeCurrency: { name: 'RON', symbol: 'RON', decimals: 18 },
+                                rpcUrls: ['https://api.roninchain.com/rpc'],
+                                blockExplorerUrls: ['https://app.roninchain.com/']
+                            }]
+                        });
+                    } else {
+                        throw switchError;
+                    }
+                }
+
+                // Request accounts
+                const accounts = await provider.request({
+                    method: "eth_requestAccounts"
                 });
-                
+
                 const address = accounts[0];
-                walletEl.innerText = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+                const shortAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-                statusEl.innerText = "Please sign the message...";
+                walletEl.innerText = `Connected: ${shortAddress}`;
+                statusEl.innerText = "Wallet Connected ✓";
 
-                // Then request signature (from your 1st script)
-                const message = `Sign in to Ronin Login\n\nAddress: ${address}\nTime: ${new Date().toISOString()}`;
+                // Optional: Request signature for login
+                const sign = confirm("Do you want to sign a message to complete login?");
+                if (sign) {
+                    statusEl.innerText = "Please sign the message...";
 
-                const signature = await provider.request({
-                    method: "personal_sign",
-                    params: [message, address]
-                });
+                    const message = `Sign in to Ronin Login\n\nAddress: ${address}\nTime: ${new Date().toISOString()}`;
 
-                console.log("Signed:", signature);
+                    const signature = await provider.request({
+                        method: "personal_sign",
+                        params: [message, address]
+                    });
 
-                statusEl.innerText = "✅ Successfully Signed In!";
+                    console.log("Signature:", signature);
+                    statusEl.innerText = "✅ Successfully Signed In!";
+                }
+
                 signInBtn.innerText = "Connected ✓";
                 signInBtn.style.background = "#22c55e";
 
             } catch (error) {
                 console.error(error);
-                statusEl.innerText = "❌ Sign in failed or cancelled";
+                statusEl.innerText = "❌ Connection failed";
                 resetButton();
             }
         }
 
         function resetButton() {
             signInBtn.disabled = false;
-            signInBtn.innerText = "Sign in with Ronin Wallet";
+            signInBtn.innerText = "Connect to Ronin Wallet";
             signInBtn.style.background = "";
         }
 
-        // Attach event listener
-        signInBtn.addEventListener("click", signInWithRonin);
+        signInBtn.addEventListener("click", connectToRonin);
     </script>
 </body>
 </html>
