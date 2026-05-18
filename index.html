@@ -1,46 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>ROFriends</title>
-</head>
-<body>
+<script>
+const loginBtn = document.getElementById("loginBtn");
+const walletEl = document.getElementById("wallet");
 
-  <button id="loginBtn">Sign In With Ronin</button>
-  <p id="wallet"></p>
+async function connectRonin() {
+  const provider = window.ronin || window.ethereum;
 
-  <script>
-    const loginBtn = document.getElementById("loginBtn");
-    const walletEl = document.getElementById("wallet");
+  if (!provider) {
+    alert("Ronin Wallet not detected!");
+    window.open("https://wallet.roninchain.com", "_blank");
+    return;
+  }
 
-    async function connectRonin() {
-      if (typeof window.ronin === "undefined") {
-        alert("Ronin Wallet is not installed!\n\nPlease install the Ronin Wallet extension first.");
-        window.open("https://wallet.roninchain.com", "_blank");
-        return;
-      }
+  try {
+    const accounts = await provider.request({
+      method: "eth_requestAccounts"
+    });
 
-      try {
-        // Use the correct provider path
-        const provider = window.ronin.provider || window.ronin;
+    const address = accounts[0];
 
-        const accounts = await provider.request({
-          method: "eth_requestAccounts"
-        });
+    walletEl.innerText = `Connected: ${address}`;
+    console.log("Connected:", address);
 
-        const address = accounts[0];
-        walletEl.innerText = `Connected: ${address}`;
-        
-        console.log("✅ Connected:", address);
-        alert("Login Success! ✅");
+  } catch (err) {
+    console.error(err);
+    alert("Connection Failed: " + err.message);
+  }
+}
 
-      } catch (err) {
-        console.error(err);
-        alert("Connection Failed: " + (err.message || err));
-      }
-    }
-
-    loginBtn.addEventListener("click", connectRonin);
-  </script>
-
-</body>
-</html>
+loginBtn.addEventListener("click", connectRonin);
+</script>
