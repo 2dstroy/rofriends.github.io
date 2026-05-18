@@ -1,131 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ronin Login - Reown AppKit</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@reown/appkit@1/dist/appkit.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1/dist/adapter.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ronin Wallet Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1f1f24, #0b0b10);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 22px;
+      font-size: 16px;
+      background: #00ffa3;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #00d48a;
+      transform: scale(1.05);
+    }
+
+    #wallet {
+      margin-top: 20px;
+      max-width: 90%;
+      word-break: break-all;
+      text-align: center;
+      opacity: 0.9;
+    }
+
+    .card {
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
-  <button id="login-wc">Connect Wallet (WalletConnect + Ronin)</button>
-  <button id="login-injected">Ronin Extension Only</button>
-  <p id="status"></p>
+
+  <div class="card">
+    <h1>Ronin Wallet Login</h1>
+    <button id="connectBtn">Connect Wallet</button>
+    <p id="wallet">Not connected</p>
+  </div>
 
   <script>
-    const status = document.getElementById("status");
-    const projectId = "YOUR_REOWN_PROJECT_ID";   // ← Get from https://cloud.reown.com
+    const connectBtn = document.getElementById("connectBtn");
+    const walletText = document.getElementById("wallet");
 
-    // Ronin Mainnet config
-    const roninNetwork = {
-      chainId: 2020,
-      name: "Ronin",
-      currency: "RON",
-      rpcUrl: "https://api.roninchain.com/rpc",
-      explorerUrl: "https://app.roninchain.com",
-      // Optional: add testnet too if needed
-    };
+    async function connectWallet() {
+      try {
+        const provider = window.ethereum;
 
-    // Metadata (required)
-    const metadata = {
-      name: "Rofriends",
-      description: "Login with Ronin",
-      url: window.location.origin,
-      icons: ["https://yourapp.com/icon.png"]   // Change this
-    };
-
-    // Initialize AppKit
-    let modal;
-
-    async function initAppKit() {
-      const adapter = new window.EthersAdapter();
-
-      modal = window.createAppKit({
-        adapters: [adapter],
-        networks: [roninNetwork],
-        defaultNetwork: roninNetwork,
-        projectId,
-        metadata,
-        themeMode: "dark",
-        features: {
-          analytics: true,
+        if (!provider) {
+          alert("No wallet found. Please install Ronin Wallet.");
+          return;
         }
-      });
 
-      console.log("✅ Reown AppKit initialized");
-    }
-
-    // Shared login handler
-    async function handleLogin(address) {
-      if (!address) return;
-
-      status.innerText = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
-
-      try {
-        // 1. Get nonce
-        const nonceRes = await fetch("YOUR_SUPABASE_FUNCTION_URL", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "get_nonce", address })
-        });
-        const { nonce } = await nonceRes.json();
-
-        const message = `Login to Rofriends with nonce: ${nonce}`;
-
-        // 2. Sign message
-        const provider = modal.getProvider();
-        const signer = await provider.getSigner();
-        const signature = await signer.signMessage(message);
-
-        // 3. Verify
-        const verifyRes = await fetch("YOUR_SUPABASE_FUNCTION_URL", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "verify", address, signature, message })
+        const accounts = await provider.request({
+          method: "eth_requestAccounts"
         });
 
-        const result = await verifyRes.json();
+        const address = accounts[0];
 
-        status.innerText = result.success 
-          ? `✅ Logged in successfully!` 
-          : `❌ Verification failed`;
+        walletText.innerText = "Connected: " + address;
+        console.log("Connected wallet:", address);
+
       } catch (err) {
         console.error(err);
-        status.innerText = "Error during login";
+        walletText.innerText = "Connection failed";
       }
     }
 
-    // WalletConnect / All Wallets Button
-    document.getElementById("login-wc").onclick = async () => {
-      try {
-        status.innerText = "Opening connection modal...";
-        await initAppKit(); // initialize on first click (or do it on load)
-
-        modal.open(); // Opens the beautiful modal with QR + many wallets
-
-        // Listen for connection (you can also use modal.subscribe)
-        modal.subscribeState((state) => {
-          if (state.address) {
-            handleLogin(state.address);
-          }
-        });
-      } catch (err) {
-        console.error(err);
-        status.innerText = "Failed to open modal";
-      }
-    };
-
-    // Injected Ronin Extension Only
-    document.getElementById("login-injected").onclick = async () => {
-      // Reuse your previous working injected code here
-      if (!window.ronin?.provider) {
-        alert("Ronin Wallet extension not found");
-        return;
-      }
-      // ... paste your ethers v6 injected login logic ...
-    };
+    connectBtn.addEventListener("click", connectWallet);
   </script>
+
 </body>
 </html>
