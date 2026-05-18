@@ -1,1 +1,89 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Ronin Wallet Connect</title> <style> body { font-family: Arial, sans-serif; background: #1f1f24; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; } button { padding: 12px 20px; font-size: 16px; background: #00ffa3; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; } button:hover { background: #00d48a; } #wallet { margin-top: 20px; word-break: break-all; } </style> </head> <body> <h1>Ronin Wallet Login</h1> <button id="connectBtn">Connect Ronin Wallet</button> <p id="wallet">Not connected</p> <script> const connectBtn = document.getElementById("connectBtn"); const walletText = document.getElementById("wallet"); async function connectRonin() { try { // Check if Ronin Wallet is installed if (!window.ronin || !window.ronin.provider) { alert("Ronin Wallet not found. Please install it."); return; } // Request accounts const accounts = await window.ronin.provider.request({ method: "eth_requestAccounts" }); const walletAddress = accounts[0]; walletText.innerText = "Connected: " + walletAddress; console.log("Wallet connected:", walletAddress); } catch (err) { console.error(err); walletText.innerText = "Connection failed"; } } connectBtn.addEventListener("click", connectRonin); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ronin Login - WalletConnect + Injected</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <!-- Reown AppKit CDN (for quick demo) -->
+  <script src="https://cdn.jsdelivr.net/npm/@reown/appkit@1/dist/appkit.min.js"></script>
+</head>
+<body>
+  <button id="login-injected">Login with Ronin Extension</button>
+  <button id="login-wc">Login with WalletConnect</button>
+  <p id="status"></p>
+
+  <script>
+    const status = document.getElementById("status");
+    const projectId = "YOUR_REOWN_PROJECT_ID"; // Get from https://cloud.reown.com
+
+    // Initialize Reown AppKit
+    const networks = [{
+      chainId: 2020,                    // Ronin Mainnet
+      name: "Ronin",
+      currency: "RON",
+      rpcUrl: "https://api.roninchain.com/rpc",
+      explorerUrl: "https://app.roninchain.com"
+    }];
+
+    const appKit = new window.AppKit({
+      projectId,
+      networks,
+      defaultNetwork: networks[0],
+      themeMode: "dark"
+    });
+
+    // === WalletConnect Login ===
+    document.getElementById("login-wc").onclick = async () => {
+      try {
+        status.innerText = "Opening WalletConnect...";
+        const { address } = await appKit.open(); // Opens modal
+
+        if (!address) {
+          status.innerText = "Connection cancelled";
+          return;
+        }
+
+        await handleLogin(address);
+      } catch (err) {
+        console.error(err);
+        status.innerText = "Connection failed";
+      }
+    };
+
+    // === Existing Injected Ronin Login (for reference) ===
+    document.getElementById("login-injected").onclick = async () => {
+      // ... your previous ethers v6 injected code ...
+    };
+
+    // Shared login flow (nonce + signature)
+    async function handleLogin(address) {
+      status.innerText = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+
+      // 1. Get nonce
+      const nonceRes = await fetch("YOUR_SUPABASE_FUNCTION_URL", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "get_nonce", address })
+      });
+      const { nonce } = await nonceRes.json();
+
+      const message = `Login to Rofriends with nonce: ${nonce}`;
+
+      // 2. Sign (works with both injected and WalletConnect)
+      const signer = await appKit.getSigner(); // or use provider.getSigner() if using ethers directly
+      const signature = await signer.signMessage(message);
+
+      // 3. Verify on backend
+      const verifyRes = await fetch("YOUR_SUPABASE_FUNCTION_URL", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", address, signature, message })
+      });
+
+      const result = await verifyRes.json();
+      status.innerText = result.success ? `✅ Logged in!` : "❌ Verification failed";
+    }
+  </script>
+</body>
+</html>
