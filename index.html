@@ -1,279 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RoFriends Social Page</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background: #f0f2f5;
-    }
-
-    .navbar {
-      background: #1877f2;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .search-box input {
-      padding: 10px;
-      border-radius: 20px;
-      border: none;
-      width: 250px;
-    }
-
-    .container {
-      display: flex;
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .sidebar {
-      width: 25%;
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      height: fit-content;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .sidebar h3 {
-      margin-bottom: 15px;
-      color: #1877f2;
-    }
-
-    .sidebar ul {
-      list-style: none;
-    }
-
-    .sidebar li {
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-
-    .feed {
-      width: 50%;
-    }
-
-    .create-post,
-    .post {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .create-post textarea {
-      width: 100%;
-      height: 80px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 10px;
-      resize: none;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      background: #1877f2;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .post-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: #1877f2;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-    }
-
-    .post img {
-      width: 100%;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
-
-    .post-actions {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 15px;
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
-
-    .post-actions button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      color: #555;
-    }
-
-    .rightbar {
-      width: 25%;
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      height: fit-content;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .friend {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 15px 0;
-    }
-
-    @media (max-width: 900px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .sidebar,
-      .feed,
-      .rightbar {
-        width: 100%;
-      }
-
-      .search-box input {
-        width: 150px;
-      }
-    }
-  </style>
+  <title>ROFriends</title>
 </head>
 <body>
 
-  <div class="navbar">
-    <div class="logo">RoFriends</div>
-    <div class="search-box">
-      <input type="text" placeholder="Search RoFriends..." />
-    </div>
-  </div>
+  <button id="loginBtn">Sign In With Ronin</button>
+  <p id="wallet"></p>
 
-  <div class="container">
+  <script>
+    const loginBtn = document.getElementById("loginBtn");
+    const walletEl = document.getElementById("wallet");
 
-    <div class="sidebar">
-      <h3>Menu</h3>
-      <ul>
-        <li>🏠 Home</li>
-        <li>👥 Friends</li>
-        <li>🎮 Gaming</li>
-        <li>📺 Videos</li>
-        <li>🛒 Marketplace</li>
-        <li>⚙ Settings</li>
-      </ul>
-    </div>
+    async function connectRonin() {
+      if (typeof window.ronin === "undefined") {
+        alert("Ronin Wallet is not installed!\n\nPlease install the Ronin Wallet extension first.");
+        window.open("https://wallet.roninchain.com", "_blank");
+        return;
+      }
 
-    <div class="feed">
+      try {
+        // Use the correct provider path
+        const provider = window.ronin.provider || window.ronin;
 
-      <div class="create-post">
-        <h3>Create Post</h3>
-        <textarea placeholder="What's on your mind?"></textarea>
-        <button class="btn">Post</button>
-      </div>
+        const accounts = await provider.request({
+          method: "eth_requestAccounts"
+        });
 
-      <div class="post">
-        <div class="post-header">
-          <div class="avatar">R</div>
-          <div>
-            <strong>RoFriends User</strong><br>
-            <small>2 hours ago</small>
-          </div>
-        </div>
+        const address = accounts[0];
+        walletEl.innerText = `Connected: ${address}`;
+        
+        console.log("✅ Connected:", address);
+        alert("Login Success! ✅");
 
-        <p>Welcome to RoFriends! Connect with your friends and share moments online.</p>
+      } catch (err) {
+        console.error(err);
+        alert("Connection Failed: " + (err.message || err));
+      }
+    }
 
-        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop" alt="Post Image">
-
-        <div class="post-actions">
-          <button>👍 Like</button>
-          <button>💬 Comment</button>
-          <button>↗ Share</button>
-        </div>
-      </div>
-
-      <div class="post">
-        <div class="post-header">
-          <div class="avatar">T</div>
-          <div>
-            <strong>2dstroy Gaming</strong><br>
-            <small>5 hours ago</small>
-          </div>
-        </div>
-
-        <p>Streaming tonight! See you in the Grand Arena 🔥</p>
-
-        <div class="post-actions">
-          <button>👍 Like</button>
-          <button>💬 Comment</button>
-          <button>↗ Share</button>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="rightbar">
-      <h3>Online Friends</h3>
-
-      <div class="friend">
-        <div class="avatar">A</div>
-        <span>Alex</span>
-      </div>
-
-      <div class="friend">
-        <div class="avatar">J</div>
-        <span>Jessa</span>
-      </div>
-
-      <div class="friend">
-        <div class="avatar">M</div>
-        <span>Mike</span>
-      </div>
-
-      <div class="friend">
-        <div class="avatar">L</div>
-        <span>Luna</span>
-      </div>
-    </div>
-
-  </div>
+    loginBtn.addEventListener("click", connectRonin);
+  </script>
 
 </body>
 </html>
