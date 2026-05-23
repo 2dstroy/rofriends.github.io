@@ -7,33 +7,45 @@
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="background-glow"></div>
 
 <div class="container">
   <div class="card">
-    <div class="logo">R</div>
-    <h1>ROFriends <span class="ronin">SocialHub</span></h1>
-    <p>Connect your Ronin Wallet and enter the next generation<br>social platform for the Ronin Network community.</p>
 
-    <button class="wallet-btn" id="connectBtn">Sign in using Ronin Wallet</button>
+    <div class="logo">R</div>
+
+    <h1>ROFriends <span class="ronin">SocialHub</span></h1>
+
+    <p>
+      Connect your Ronin Wallet and enter the next generation<br>
+      social platform for the Ronin Network community.
+    </p>
+
+    <button class="wallet-btn" id="connectBtn">
+      Sign in using Ronin Wallet
+    </button>
 
     <div class="wallet-address" id="walletAddress" style="display:none;"></div>
 
-    <button class="disconnect-btn" id="disconnectBtn" style="display:none;">Disconnect Wallet</button>
+    <button class="disconnect-btn" id="disconnectBtn" style="display:none;">
+      Disconnect Wallet
+    </button>
+
+    <!-- ✅ Apps button -->
+    <button onclick="location.href='apps.html'">
+      Open Apps
+    </button>
 
     <div class="footer">Powered by Ronin Network</div>
+
   </div>
 </div>
-<button onclick="location.href='apps.html'">
-  Open Apps
-</button>
-  </div>
 
-<!-- ✅ JS should always be here (bottom of body) -->
+<!-- ✅ JS always at bottom -->
 <script src="app.js"></script>
-
 
 </body>
 </html>
