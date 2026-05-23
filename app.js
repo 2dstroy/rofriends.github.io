@@ -1,4 +1,4 @@
-<script>
+
 const RONIN_CHAIN_ID = "0x7e4";
 
 async function connectRoninWallet() {
@@ -73,4 +73,4 @@ window.addEventListener("load", () => {
 
 document.getElementById("connectBtn").addEventListener("click", connectRoninWallet);
 document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
-</script>
+
