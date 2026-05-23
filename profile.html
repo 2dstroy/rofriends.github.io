@@ -1,29 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Profile</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2dstroy.ron | Social Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #111827, #1e293b);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .background-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: #00b7ff;
+      filter: blur(120px);
+      opacity: 0.15;
+      top: -100px;
+      right: -100px;
+      border-radius: 50%;
+    }
+
+    .background-glow2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: #0072ff;
+      filter: blur(100px);
+      opacity: 0.1;
+      bottom: -80px;
+      left: -80px;
+      border-radius: 50%;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      width: 420px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      width: 110px;
+      height: 110px;
+      margin: auto;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 42px;
+      font-weight: bold;
+      box-shadow: 0 0 30px rgba(0, 183, 255, 0.6);
+      overflow: hidden;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .ronin {
+      color: #00b7ff;
+    }
+
+    .handle {
+      color: #64748b;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #cbd5e1;
+      font-size: 15px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 35px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #00b7ff;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .wallet-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #009dff, #005eff);
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 5px 20px rgba(0, 123, 255, 0.35);
+      margin-bottom: 12px;
+    }
+
+    .wallet-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5);
+    }
+
+    .wallet-address {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #38bdf8;
+      word-break: break-all;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 30px 0;
+    }
+
+    .social-btn {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .social-btn:hover {
+      background: rgba(0, 183, 255, 0.15);
+      color: #00b7ff;
+      transform: scale(1.1);
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .disconnect-btn {
+      margin-top: 12px;
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <div class="background-glow"></div>
+  <div class="background-glow2"></div>
 
-<header>
-  <div class="logo">ROFriends</div>
-</header>
+  <div class="container">
+    <div class="card">
+      <!-- Logo / Avatar -->
+      <div class="logo">
+        <span style="font-size: 48px;">🔥</span>
+      </div>
 
-<main style="padding:20px;">
+      <h1>2dstroy.<span class="ronin">ron</span></h1>
+      <div class="handle">@_2dstroy</div>
 
-  <div class="post-card">
-    <img src="assets/cover.jpg" style="width:100%; border-radius:15px;">
+      <p>
+        Digital ronin • Pixel artist • Web3 creator.<br>
+        Building in the shadows. Destroying the ordinary.
+      </p>
 
-    <div style="margin-top:-50px; padding-left:20px;">
-      <img src="assets/avatar.png" style="width:100px; border-radius:50%; border:4px solid #242526;">
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-number">248</div>
+          <div class="stat-label">Posts</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">12.4K</div>
+          <div class="stat-label">Followers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">892</div>
+          <div class="stat-label">Following</div>
+        </div>
+      </div>
+
+      <!-- Wallet Button -->
+      <button class="wallet-btn" onclick="connectWallet()">
+        Connect Wallet
+      </button>
+
+      <div id="wallet-info" class="wallet-address" style="display: none;">
+        0x71C7...A3f9
+      </div>
+
+      <!-- Social Links -->
+      <div class="social-links">
+        <a href="#" class="social-btn">𝕏</a>
+        <a href="#" class="social-btn">📸</a>
+        <a href="#" class="social-btn">𝔻</a>
+        <a href="#" class="social-btn">📺</a>
+      </div>
+
+      <div class="footer">
+        Member since 2024 • Level 42 Ronin
+      </div>
+
+      <button class="disconnect-btn" onclick="disconnectWallet()">
+        Disconnect
+      </button>
     </div>
-
-    <h2>Troy Alisla</h2>
-    <p>RONIN Community Builder</p>
   </div>
 
-</main>
+  <script>
+    function connectWallet() {
+      const walletInfo = document.getElementById('wallet-info');
+      walletInfo.style.display = 'block';
+      walletInfo.textContent = '0x71C7b9E2fA3f9dA3...A3f9';
+      
+      // Fake connection animation
+      const btn = document.querySelector('.wallet-btn');
+      btn.textContent = 'Connected ✓';
+      btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    }
 
+    function disconnectWallet() {
+      const walletInfo = document.getElementById('wallet-info');
+      walletInfo.style.display = 'none';
+      
+      const btn = document.querySelector('.wallet-btn');
+      btn.textContent = 'Connect Wallet';
+      btn.style.background = 'linear-gradient(135deg, #009dff, #005eff)';
+    }
+
+    // Keyboard easter egg
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'r' && e.ctrlKey) {
+        document.body.style.transition = 'filter 0.5s';
+        document.body.style.filter = 'hue-rotate(90deg)';
+        setTimeout(() => {
+          document.body.style.filter = 'none';
+        }, 800);
+      }
+    });
+  </script>
 </body>
 </html>
