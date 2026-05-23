@@ -1,20 +1,76 @@
-const connectBtn = document.getElementById('connectBtn');
+<script>
+const RONIN_CHAIN_ID = "0x7e4";
 
-connectBtn.addEventListener('click', async () => {
-  if (window.ronin) {
-    try {
-      const accounts = await window.ronin.request({
-        method: 'eth_requestAccounts'
-      });
+async function connectRoninWallet() {
+  const btn = document.getElementById("connectBtn");
+  const walletAddressEl = document.getElementById("walletAddress");
+  const disconnectBtn = document.getElementById("disconnectBtn");
 
-      connectBtn.innerText = accounts[0].slice(0, 6) + '...';
+  if (typeof window.ronin === "undefined" || !window.ronin.provider) {
+    alert("Ronin Wallet not detected. Please install the Ronin Wallet extension.");
+    window.open("https://wallet.roninchain.com/", "_blank");
+    return;
+  }
 
-      alert('Ronin Wallet Connected');
+  try {
+    btn.innerHTML = "Connecting...";
+    btn.disabled = true;
 
-    } catch (err) {
-      console.log(err);
+    const provider = window.ronin.provider;
+    const accounts = await provider.request({ method: "eth_requestAccounts" });
+    const wallet = accounts[0];
+
+    // Chain Validation
+    let chainId = await provider.request({ method: 'eth_chainId' });
+    if (chainId !== RONIN_CHAIN_ID) {
+      if (confirm("You are not on Ronin Network.\nSwitch now?")) {
+        try {
+          await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: RONIN_CHAIN_ID }] });
+        } catch (e) {
+          alert("Failed to switch network. Please switch manually in your wallet.");
+          return;
+        }
+      } else {
+        return;
+      }
     }
-  } else {
-    alert('Ronin Wallet not installed');
+
+    const truncated = wallet.substring(0, 6) + "..." + wallet.substring(wallet.length - 4);
+    localStorage.setItem("roninWallet", wallet);
+
+    walletAddressEl.innerHTML = `✅ Connected Successfully!<br><strong>${truncated}</strong><br><small style="color:#4ade80;">Ronin Mainnet</small>`;
+    walletAddressEl.style.color = "#4ade80";
+    walletAddressEl.style.display = "block";
+    disconnectBtn.style.display = "inline-block";
+
+  } catch (error) {
+    if (error.code === 4001) alert("Connection rejected.");
+    else alert("Failed to connect.");
+  } finally {
+    btn.innerHTML = "Sign in using Ronin Wallet";
+    btn.disabled = false;
+  }
+}
+
+function disconnectWallet() {
+  localStorage.removeItem("roninWallet");
+  document.getElementById("walletAddress").style.display = "none";
+  document.getElementById("disconnectBtn").style.display = "none";
+}
+
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("roninWallet");
+  if (saved) {
+    const el = document.getElementById("walletAddress");
+    const disc = document.getElementById("disconnectBtn");
+    const trunc = saved.substring(0,6) + "..." + saved.substring(saved.length-4);
+    el.innerHTML = `✅ Connected!<br><strong>${trunc}</strong><br><small style="color:#4ade80;">Ronin Mainnet</small>`;
+    el.style.color = "#4ade80";
+    el.style.display = "block";
+    disc.style.display = "inline-block";
   }
 });
+
+document.getElementById("connectBtn").addEventListener("click", connectRoninWallet);
+document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
+</script>
