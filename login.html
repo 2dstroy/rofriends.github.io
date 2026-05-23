@@ -3,48 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login with Ronin Wallet</title>
+  <title>Login - ROFriends SocialHub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 80px 20px;
-      background: #0f0f1a;
+      background: linear-gradient(135deg,#0f172a,#111827);
       color: white;
+      min-height: 100vh;
+      margin: 0;
     }
     h1 {
       margin-bottom: 40px;
       color: #00d4ff;
+      font-size: 42px;
+    }
+    .card {
+      max-width: 420px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      padding: 50px 30px;
     }
     button {
-      padding: 18px 40px;
+      padding: 18px 50px;
       font-size: 20px;
       background: linear-gradient(45deg, #00bfff, #0099cc);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       margin: 20px;
+      width: 100%;
     }
     button:hover {
       background: linear-gradient(45deg, #0099cc, #0077aa);
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
     #status {
       margin-top: 30px;
       font-size: 18px;
-      min-height: 50px;
+      min-height: 80px;
     }
     .success { color: #00ff88; }
   </style>
 </head>
 <body>
 
-  <h1>Connect Ronin Wallet</h1>
-  
-  <button id="roninBtn">🔗 Login with Ronin Wallet</button>
-  
-  <div id="status"></div>
+  <div class="card">
+    <h1>ROFriends</h1>
+    <p style="color:#cbd5e1; margin-bottom:30px;">Login with your Ronin Wallet</p>
+    
+    <button id="roninBtn">🔗 Login with Ronin Wallet</button>
+    
+    <div id="status"></div>
+  </div>
 
   <script>
     const btn = document.getElementById('roninBtn');
@@ -65,11 +81,7 @@
 
       try {
         const provider = window.ronin.provider;
-        
-        const accounts = await provider.request({
-          method: 'eth_requestAccounts'
-        });
-
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
 
         status.innerHTML = `
@@ -78,10 +90,11 @@
           ${address}
         `;
 
-        console.log("Ronin Wallet Connected:", address);
-
-        // Optional: You can redirect after successful connection
-        // setTimeout(() => { window.location.href = "index.html"; }, 2000);
+        // Save and redirect to main app
+        localStorage.setItem("roninWallet", address);
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1500);
 
       } catch (error) {
         console.error(error);
