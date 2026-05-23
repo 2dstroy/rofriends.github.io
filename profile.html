@@ -268,38 +268,6 @@
       </button>
     </div>
   </div>
-
-  <script>
-    function connectWallet() {
-      const walletInfo = document.getElementById('wallet-info');
-      walletInfo.style.display = 'block';
-      walletInfo.textContent = '0x71C7b9E2fA3f9dA3...A3f9';
-      
-      // Fake connection animation
-      const btn = document.querySelector('.wallet-btn');
-      btn.textContent = 'Connected ✓';
-      btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-    }
-
-    function disconnectWallet() {
-      const walletInfo = document.getElementById('wallet-info');
-      walletInfo.style.display = 'none';
-      
-      const btn = document.querySelector('.wallet-btn');
-      btn.textContent = 'Connect Wallet';
-      btn.style.background = 'linear-gradient(135deg, #009dff, #005eff)';
-    }
-
-    // Keyboard easter egg
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'r' && e.ctrlKey) {
-        document.body.style.transition = 'filter 0.5s';
-        document.body.style.filter = 'hue-rotate(90deg)';
-        setTimeout(() => {
-          document.body.style.filter = 'none';
-        }, 800);
-      }
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
