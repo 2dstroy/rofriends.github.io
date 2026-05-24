@@ -19,28 +19,28 @@
       overflow: hidden;
     }
 
-    .background-glow {
+    .background-glow, .background-glow2 {
       position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+    }
+
+    .background-glow {
       width: 500px;
       height: 500px;
       background: #00b7ff;
-      filter: blur(120px);
-      opacity: 0.15;
       top: -100px;
       right: -100px;
-      border-radius: 50%;
     }
 
     .background-glow2 {
-      position: absolute;
       width: 400px;
       height: 400px;
       background: #0072ff;
-      filter: blur(100px);
-      opacity: 0.1;
       bottom: -80px;
       left: -80px;
-      border-radius: 50%;
+      opacity: 0.1;
     }
 
     .container {
@@ -67,8 +67,7 @@
     .logo {
       width: 110px;
       height: 110px;
-      margin: auto;
-      margin-bottom: 20px;
+      margin: 0 auto 20px;
       border-radius: 50%;
       background: linear-gradient(135deg, #00c6ff, #0072ff);
       display: flex;
@@ -142,9 +141,10 @@
       font-size: 14px;
       color: #38bdf8;
       word-break: break-all;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.2);
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
+      border: 1px solid rgba(0, 183, 255, 0.2);
     }
 
     .social-links {
@@ -199,9 +199,7 @@
 
   <div class="container">
     <div class="card">
-      <div class="logo">
-        <span>🔥</span>
-      </div>
+      <div class="logo"><span>🔥</span></div>
 
       <h1>2dstroy.<span class="ronin">ron</span></h1>
       <div class="handle">@_2dstroy</div>
@@ -247,7 +245,6 @@
     </div>
   </div>
 
-  <!-- At the bottom of <body>, before </body> -->
   <script src="ronin-connect.js"></script>
 </body>
 </html>
