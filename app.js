@@ -1,4 +1,3 @@
-// app.js
 import { auth, db } from "./firebase.js";
 import { signInWithCustomToken } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
@@ -9,12 +8,11 @@ function truncateAddress(addr) {
   return addr.slice(0, 6) + "..." + addr.slice(-4);
 }
 
-// Main Connect Function
 async function connectRoninWallet() {
   const btn = document.getElementById("connectBtn");
 
   if (!window.ronin?.provider) {
-    alert("Ronin Wallet not detected!\nPlease install Ronin Wallet extension.");
+    alert("Ronin Wallet not detected!\nPlease install the Ronin Wallet extension.");
     window.open("https://wallet.roninchain.com/", "_blank");
     return;
   }
@@ -25,11 +23,11 @@ async function connectRoninWallet() {
 
     const provider = window.ronin.provider;
 
-    // 1. Request wallet
+    // Connect Wallet
     const accounts = await provider.request({ method: "eth_requestAccounts" });
     const wallet = accounts[0];
 
-    // 2. Switch to Ronin Mainnet
+    // Switch Network
     const chainId = await provider.request({ method: "eth_chainId" });
     if (chainId.toLowerCase() !== RONIN_CHAIN_ID.toLowerCase()) {
       await provider.request({
@@ -38,28 +36,42 @@ async function connectRoninWallet() {
       });
     }
 
-    // 3. Ask user to sign message (Proof of Ownership)
-    const message = `Sign in to ROFriends SocialHub\n\nWallet: ${wallet}\nTime: ${Date.now()}`;
+    // Sign Message
+    const message = `Sign in to ROFriends SocialHub\nWallet: ${wallet}\nTime: ${Date.now()}`;
     const signature = await provider.request({
       method: "personal_sign",
       params: [message, wallet]
     });
 
-    console.log("Signature:", signature);
+    // Call Cloud Function
+    const response = await fetch("https://us-central1-rofriends-ab0b8.cloudfunctions.net/createCustomToken", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wallet, signature, message })
+    });
 
-    // TODO: Send wallet + signature to your backend
-    // For now, we'll simulate
-    alert("✅ Wallet connected and signed!\n\n(Next: Send signature to backend for Firebase Custom Token)");
+    const result = await response.json();
 
-    // Temporary: Use wallet address as display
+    if (!result.success) throw new Error("Failed to authenticate");
+
+    // Firebase Auth
+    await signInWithCustomToken(auth, result.customToken);
+
+    // Save user data
+    await setDoc(doc(db, "users", wallet.toLowerCase()), {
+      wallet: wallet,
+      lastLogin: serverTimestamp(),
+      network: "Ronin Mainnet"
+    }, { merge: true });
+
+    localStorage.setItem("roninWallet", wallet);
     updateWalletUI(wallet);
 
-    // Save to localStorage
-    localStorage.setItem("roninWallet", wallet);
+    alert("✅ Successfully signed in!");
 
   } catch (error) {
-    console.error("Error:", error);
-    alert("Failed to connect: " + error.message);
+    console.error(error);
+    alert("Error: " + error.message);
   } finally {
     btn.innerHTML = "Sign in using Ronin Wallet";
     btn.disabled = false;
@@ -69,14 +81,13 @@ async function connectRoninWallet() {
 function updateWalletUI(wallet) {
   const el = document.getElementById("walletAddress");
   el.innerHTML = `
-    ✅ Connected Successfully!<br>
+    ✅ Connected & Authenticated!<br>
     <strong>${truncateAddress(wallet)}</strong><br>
     <small style="color:#4ade80;">Ronin Mainnet</small>
   `;
   el.style.display = "block";
 }
 
-// Disconnect
 function disconnectWallet() {
   localStorage.removeItem("roninWallet");
   document.getElementById("walletAddress").style.display = "none";
