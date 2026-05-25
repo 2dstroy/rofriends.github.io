@@ -1,251 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2dstroy.ron | Social Hub</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #111827, #1e293b);
-      color: white;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .background-glow, .background-glow2 {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.15;
-    }
-
-    .background-glow {
-      width: 500px;
-      height: 500px;
-      background: #00b7ff;
-      top: -100px;
-      right: -100px;
-    }
-
-    .background-glow2 {
-      width: 400px;
-      height: 400px;
-      background: #0072ff;
-      bottom: -80px;
-      left: -80px;
-      opacity: 0.1;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .card {
-      width: 420px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(14px);
-      border-radius: 24px;
-      padding: 40px;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .logo {
-      width: 110px;
-      height: 110px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 48px;
-      box-shadow: 0 0 30px rgba(0, 183, 255, 0.6);
-    }
-
-    h1 {
-      font-size: 34px;
-      margin-bottom: 8px;
-    }
-
-    .ronin { color: #00b7ff; }
-    .handle {
-      color: #64748b;
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    p {
-      color: #cbd5e1;
-      font-size: 15px;
-      margin-bottom: 30px;
-      line-height: 1.6;
-    }
-
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-bottom: 35px;
-    }
-
-    .stat-number {
-      font-size: 24px;
-      font-weight: bold;
-      color: #00b7ff;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .wallet-btn {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #009dff, #005eff);
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 5px 20px rgba(0, 123, 255, 0.35);
-      margin-bottom: 12px;
-    }
-
-    .wallet-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 123, 255, 0.5);
-    }
-
-    .wallet-address {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #38bdf8;
-      word-break: break-all;
-      padding: 14px;
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 12px;
-      border: 1px solid rgba(0, 183, 255, 0.2);
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin: 30px 0;
-    }
-
-    .social-btn {
-      width: 48px;
-      height: 48px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #cbd5e1;
-      text-decoration: none;
-      transition: 0.3s;
-      font-size: 20px;
-    }
-
-    .social-btn:hover {
-      background: rgba(0, 183, 255, 0.15);
-      color: #00b7ff;
-      transform: scale(1.1);
-    }
-
-    .footer {
-      margin-top: 30px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .disconnect-btn {
-      margin-top: 12px;
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #94a3b8;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ROFriends SocialHub</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <div class="background-glow"></div>
-  <div class="background-glow2"></div>
 
   <div class="container">
     <div class="card">
-      <div class="logo"><span>🔥</span></div>
 
-      <h1>2dstroy.<span class="ronin">ron</span></h1>
-      <div class="handle">@_2dstroy</div>
-
+      <div class="logo">R</div>
+      <h1>ROFriends <span class="ronin">SocialHub</span></h1>
+      
       <p>
-        Digital ronin • Pixel artist • Web3 creator.<br>
-        Building in the shadows. Destroying the ordinary.
+        Connect your Ronin Wallet and enter the next generation<br>
+        social platform for the Ronin Network community.
       </p>
 
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-number">248</div>
-          <div class="stat-label">Posts</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">12.4K</div>
-          <div class="stat-label">Followers</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">892</div>
-          <div class="stat-label">Following</div>
-        </div>
-      </div>
+      <button class="wallet-btn" id="connectBtn">
+        Sign in using Ronin Wallet
+      </button>
 
-      <button class="wallet-btn" id="connectBtn">Connect Ronin Wallet</button>
+      <div class="wallet-address" id="walletAddress"></div>
 
-      <div id="wallet-info" class="wallet-address" style="display: none;"></div>
-
-      <div class="social-links">
-        <a href="#" class="social-btn">𝕏</a>
-        <a href="#" class="social-btn">📸</a>
-        <a href="#" class="social-btn">𝔻</a>
-        <a href="#" class="social-btn">📺</a>
-      </div>
+      <button class="disconnect-btn" id="disconnectBtn">
+        Disconnect Wallet
+      </button>
 
       <div class="footer">
-        Member since 2024 • Level 42 Ronin
+        Powered by Ronin Network • Firebase
       </div>
 
-      <button class="disconnect-btn" id="disconnectBtn" style="display: none;">
-        Disconnect
-      </button>
     </div>
   </div>
 
-
-  <script src="ronin-connect.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
